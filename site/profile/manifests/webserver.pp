@@ -19,5 +19,7 @@ class profile::webserver(
   file { "${docroot}/index.html":
     content => $page_content,
   }
+  
+  notify{'Showing git integration':}
 
 }
