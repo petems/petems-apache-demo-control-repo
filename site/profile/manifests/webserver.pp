@@ -1,20 +1,23 @@
 # Webserver profile: configure Apache to run
-class profile::webserver {
+class profile::webserver(
+  Boolean $default_vhost = true,
+  Integer $port = 8080,
+  String $docroot = "/var/www/${facts['fqdn']}",
+  String $page_content = 'Test page <br> This is a test',
+){
 
-  include ::apache
-
-  file { "/var/www/${facts['fqdn']}":
-    ensure => directory,
+  class { '::apache':
+    default_vhost => $default_vhost,
   }
 
   ::apache::vhost { $facts['fqdn']:
     port    => $port,
     docroot => $docroot,
-    before  => File["/var/www//index.html"]
+    before  => File["${docroot}/index.html"]
   }
 
-  file { "/var/www/${facts['fqdn']}/index.html":
-    content => 'Test page <br>This is a test',
+  file { "${docroot}/index.html":
+    content => $page_content,
   }
 
 }
